@@ -5,7 +5,7 @@ Webdev sessions for VandyHacks IV. This contains a real time, persistent todo-li
 
 To run:
 
-    npm i
+    npm install
     npm start
 
 Then visit `localhost:3000` to access the app.
