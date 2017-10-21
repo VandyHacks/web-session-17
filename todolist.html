@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Todo List</title>
+    <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+    <div id="app">
+        <ol>
+            <li v-for="(item, index) in items">{{item}}
+                <button @click="removeItem(index)">X</button>
+            </li>
+        </ol>
+        <input v-model="value" @keyup.enter="addItem()" placeholder="item to add"></input>
+        <button @click="addItem()">Add Item</button>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                value: '',
+                items: []
+            },
+            mounted() {
+                fetch('/items').then(result => result.text())
+                    .then(text => {
+                        this.items = JSON.parse(text);
+                    });
+            },
+            methods: {
+                addItem() {
+                    if (this.value.length > 0) {
+                        this.items.push(this.value);
+                        this.value = '';
+                    }
+                },
+                removeItem(index) {
+                    this.items.splice(index, 1);
+                }
+            },
+            watch: {
+                items() {
+                    fetch('/items/set/' + JSON.stringify(this.items));
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
