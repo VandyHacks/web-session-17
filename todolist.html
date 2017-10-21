@@ -28,20 +28,24 @@
                     .then(text => {
                         this.items = JSON.parse(text);
                     });
+                let protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:';
+                let ws = new WebSocket(protocolPrefix + '//' + location.host + '/sock');
+                ws.onopen = () => ws.send('join');
+                ws.onmessage = msg => this.items = JSON.parse(msg.data);
             },
             methods: {
                 addItem() {
                     if (this.value.length > 0) {
                         this.items.push(this.value);
                         this.value = '';
+                        this.updateItems();
                     }
                 },
                 removeItem(index) {
                     this.items.splice(index, 1);
-                }
-            },
-            watch: {
-                items() {
+                    this.updateItems();
+                },
+                updateItems() {
                     fetch('/items/set/' + JSON.stringify(this.items));
                 }
             }
